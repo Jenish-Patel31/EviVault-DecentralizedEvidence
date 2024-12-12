@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>Dashboard</h2>
+        <ul>
+            <li><a href="dashboard.html">Main Dashboard</a></li>
+            <li><a href="new-case.html">New Case Creation</a></li>
+            <li><a href="evidence-library.html">Evidence Library</a></li>
+            <li><a href="log-details.html">Log Details</a></li>
+            <!-- <li><a href="drafts.html">Drafts</a></li> -->
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h1>Main Dashboard</h1>
+        <p>Welcome to the main dashboard! Here you can get an overview of ongoing cases, manage new cases, and access
+            the evidence library.</p>
+    </div>
+
+    <!-- <script>
+        async function loadAuditTrail() {
+            const response = await fetch('/auth/contract-details');
+            const contractData = await response.json();
+
+            if (window.ethereum) {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                const contract = new ethers.Contract(contractData.contractAddress, contractData.contractABI, provider);
+
+                try {
+                    const events = await contract.queryFilter("LoginEvent");
+                    const tableBody = document.getElementById("auditTable").querySelector("tbody");
+
+                    events.forEach(event => {
+                        const { role, userId, timestamp } = event.args;
+                        const row = document.createElement("tr");
+
+                        row.innerHTML = `<td>${role}</td><td>${userId}</td><td>${new Date(timestamp.toNumber() * 1000).toLocaleString()}</td>`;
+                        tableBody.appendChild(row);
+                    });
+                } catch (error) {
+                    console.error("Error loading audit trail:", error);
+                }
+            } else {
+                alert("Please install MetaMask.");
+            }
+        }
+
+        window.onload = loadAuditTrail;
+    </script> -->
+
+</body>
+
+</html>

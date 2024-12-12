@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Case Creation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>Dashboard</h2>
+        <ul>
+            <li><a href="dashboard.html">Main Dashboard</a></li>
+            <li><a href="new-case.html">New Case Creation</a></li>
+            <li><a href="evidence-library.html">Evidence Library</a></li>
+            <li><a href="log-details.html">Log Details</a></li>
+            <!-- <li><a href="drafts.html">Drafts</a></li> -->
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h1>Create New Case</h1>
+
+        <form id="caseForm">
+            <div class="form-group">
+                <label for="caseName">Case Name</label>
+                <input type="text" id="caseName" required>
+            </div>
+            <div class="form-group">
+                <label for="caseDescription">Case Description</label>
+                <textarea id="caseDescription" rows="4" required></textarea>
+            </div>
+            <!-- Add additional fields as required by the schema -->
+            <div class="form-group">
+                <label for="caseId">Case ID</label>
+                <input type="text" id="caseId" required>
+            </div>
+            <div class="form-group">
+                <label for="caseDate">Case Date</label>
+                <input type="date" id="caseDate" required>
+            </div>
+            <div class="form-group">
+                <label for="caseType">Case Type</label>
+                <input type="text" id="caseType" required>
+            </div>
+            <div class="form-group">
+                <label for="place">Place</label>
+                <input type="text" id="place" required>
+            </div>
+            <div class="form-group">
+                <label for="investigatorOfficer">Investigator Officer</label>
+                <input type="text" id="investigatorOfficer" required>
+            </div>
+            <div class="form-group">
+                <label for="departmentName">Department Name</label>
+                <input type="text" id="departmentName" required>
+            </div>
+            <div class="form-group">
+                <label for="caseStatus">Case Status</label>
+                <select id="caseStatus" required>
+                    <option value="Open">Open</option>
+                    <option value="Closed">Closed</option>
+                    <option value="Pending">Pending</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="forwardTo">Forward To</label>
+                <input type="text" id="forwardTo" required>
+            </div>
+
+            <!-- Document upload section (already present) -->
+            <div class="form-group">
+                <label for="docCount">Number of Documents (Images)</label>
+                <input type="number" id="docCount" min="1" max="5" required>
+            </div>
+            <div id="uploadSection"></div>
+
+            <button type="button" onclick="createCase()">Create Case</button>
+        </form>
+
+    </div>
+
+    <script>
+        document.getElementById('docCount').addEventListener('input', function () {
+            const uploadSection = document.getElementById('uploadSection');
+            uploadSection.innerHTML = '';
+            const count = this.value;
+            for (let i = 1; i <= count; i++) {
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                div.innerHTML = `<label for="document${i}">Upload Document ${i}</label>
+                                 <input type="file" id="document${i}" name="documents" accept="image/*" required>`;
+                uploadSection.appendChild(div);
+            }
+        });
+
+        async function createCase() {
+            const caseName = document.getElementById('caseName').value;
+            const caseDescription = document.getElementById('caseDescription').value;
+            const caseId = document.getElementById('caseId').value;
+            const caseDate = document.getElementById('caseDate').value;
+            const caseType = document.getElementById('caseType').value;
+            const place = document.getElementById('place').value;
+            const investigatorOfficer = document.getElementById('investigatorOfficer').value;
+            const departmentName = document.getElementById('departmentName').value;
+            const caseStatus = document.getElementById('caseStatus').value;
+            const forwardTo = document.getElementById('forwardTo').value;
+            const docCount = document.getElementById('docCount').value;
+            const formData = new FormData();
+
+            for (let i = 1; i <= docCount; i++) {
+                const fileInput = document.getElementById(`document${i}`);
+                const file = fileInput.files[0];
+                formData.append('files', file); // Append each document
+            }
+
+            try {
+                const uploadResponse = await fetch('/auth/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!uploadResponse.ok) {
+                    throw new Error(`Upload failed with status ${uploadResponse.status}`);
+                }
+
+                const uploadedFiles = await uploadResponse.json();
+
+                const caseData = {
+                    caseName,
+                    caseDescription,
+                    caseId,
+                    caseDate,
+                    caseType,
+                    place,
+                    investigatorOfficer,
+                    departmentName,
+                    caseStatus,
+                    forwardTo,
+                    documents: uploadedFiles // Array of files with CIDs
+                };
+
+                // Store the case in the backend (if MongoDB is used)
+                const caseResponse = await fetch('/auth/create-case', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(caseData)
+                });
+
+                if (!caseResponse.ok) {
+                    throw new Error(`Case creation failed with status ${caseResponse.status}`);
+                }
+
+                alert('Case created successfully');
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`Failed to create case: ${error.message}`);
+            }
+        }
+
+        async function createCase() {
+            const caseName = document.getElementById('caseName').value;
+            const caseDescription = document.getElementById('caseDescription').value;
+            const caseId = document.getElementById('caseId').value;
+            const caseDate = document.getElementById('caseDate').value;
+            const caseType = document.getElementById('caseType').value;
+            const place = document.getElementById('place').value;
+            const investigatorOfficer = document.getElementById('investigatorOfficer').value;
+            const departmentName = document.getElementById('departmentName').value;
+            const caseStatus = document.getElementById('caseStatus').value;
+            const forwardTo = document.getElementById('forwardTo').value;
+            const docCount = document.getElementById('docCount').value;
+            const formData = new FormData();
+
+            // Append each file to FormData
+            for (let i = 1; i <= docCount; i++) {
+                const fileInput = document.getElementById(`document${i}`);
+                const file = fileInput.files[0];
+                formData.append('files', file);
+            }
+
+            try {
+                // Upload files to IPFS
+                const uploadResponse = await fetch('/auth/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!uploadResponse.ok) {
+                    throw new Error(`Upload failed with status ${uploadResponse.status}`);
+                }
+
+                const uploadedFiles = await uploadResponse.json();
+
+                // Prepare case data including uploaded files
+                const caseData = {
+                    caseName,
+                    caseDescription,
+                    caseId,
+                    caseDate,
+                    caseType,
+                    place,
+                    investigatorOfficer,
+                    departmentName,
+                    caseStatus,
+                    forwardTo,
+                    documents: uploadedFiles
+                };
+
+                // Send case data to backend
+                const caseResponse = await fetch('/auth/create-case', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(caseData)
+                });
+
+                if (!caseResponse.ok) {
+                    throw new Error(`Case creation failed with status ${caseResponse.status}`);
+                }
+
+                alert('Case created successfully');
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`Failed to create case: ${error.message}`);
+            }
+        }
+
+
+
+
+        // async function createCase() {
+        //     const caseName = document.getElementById('caseName').value;
+        //     const caseDescription = document.getElementById('caseDescription').value;
+        //     const docCount = document.getElementById('docCount').value;
+        //     const formData = new FormData();
+
+        //     for (let i = 1; i <= docCount; i++) {
+        //         const fileInput = document.getElementById(`document${i}`);
+        //         const file = fileInput.files[0];
+        //         formData.append('files', file); // Append each document
+        //     }
+
+        //     try {
+        //         const uploadResponse = await fetch('/auth/upload', {
+        //             method: 'POST',
+        //             body: formData
+        //         });
+
+        //         if (!uploadResponse.ok) {
+        //             throw new Error(`Upload failed with status ${uploadResponse.status}`);
+        //         }
+
+        //         const uploadedFiles = await uploadResponse.json();
+        //         const caseData = {
+        //             caseName,
+        //             caseDescription,
+        //             documents: uploadedFiles // Array of files with CIDs
+        //         };
+
+        //         const caseResponse = await fetch('/auth/create-case', {
+        //             method: 'POST',
+        //             headers: { 'Content-Type': 'application/json' },
+        //             body: JSON.stringify(caseData)
+        //         });
+
+        //         if (!caseResponse.ok) {
+        //             throw new Error(`Case creation failed with status ${caseResponse.status}`);
+        //         }
+
+        //         alert('Case created successfully');
+        //     } catch (error) {
+        //         console.error('Error:', error);
+        //         alert(`Failed to create case: ${error.message}`);
+        //     }
+        // }
+
+    </script>
+</body>
+
+</html>

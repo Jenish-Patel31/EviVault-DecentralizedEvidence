@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Details</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>Dashboard</h2>
+        <ul>
+            <li><a href="dashboard.html">Main Dashboard</a></li>
+            <li><a href="new-case.html">New Case Creation</a></li>
+            <li><a href="evidence-library.html">Evidence Library</a></li>
+            <li><a href="log-details.html">Log Details</a></li>
+            <!-- <li><a href="drafts.html">Drafts</a></li> -->
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h1>Log Details</h1>
+        <p>This page is accessible only to Department Heads and Judicial Officers.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>User Role</th>
+                    <th>User ID</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody id="auditTable">
+                <!-- Log entries will be inserted dynamically here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const CONTRACT_ADDRESS = "0xf9c3E91572e0f9CDe96DF7B17b313CF1107A2A89";
+        const CONTRACT_ABI = [
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "role",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "userId",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "timestamp",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "LoginRecorded",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "_role",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_userId",
+                        "type": "string"
+                    }
+                ],
+                "name": "logLogin",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "_userId",
+                        "type": "string"
+                    }
+                ],
+                "name": "getLastLogin",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getLoginEvents",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "string",
+                                "name": "role",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "userId",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "timestamp",
+                                "type": "uint256"
+                            }
+                        ],
+                        "internalType": "struct LoginAuditTrail.LoginEvent[]",
+                        "name": "",
+                        "type": "tuple[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "name": "lastLogin",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "loginEvents",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "role",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "userId",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "timestamp",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+
+        let provider, contract;
+
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            async function loadAuditTrail() {
+                if (window.ethereum) {
+                    // Request account access if needed
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    await provider.send("eth_requestAccounts", []); // Request user's MetaMask account access
+
+                    // Connect to the smart contract
+                    contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+
+                    try {
+                        // Fetch the login events from the smart contract
+                        const events = await contract.getLoginEvents();
+                        console.log(events);
+                        const tableBody = document.getElementById("auditTable");
+
+                        // Loop through the events and insert them into the table
+                        events.forEach(event => {
+                            const row = document.createElement("tr");
+
+                            const roleCell = document.createElement("td");
+                            const userIdCell = document.createElement("td");
+                            const timestampCell = document.createElement("td");
+
+                            // Format the timestamp into a human-readable format
+                            const timestamp = new Date(event.timestamp * 1000).toLocaleString();
+
+                            roleCell.textContent = event.role;
+                            userIdCell.textContent = event.userId;
+                            timestampCell.textContent = timestamp;
+
+                            row.appendChild(roleCell);
+                            row.appendChild(userIdCell);
+                            row.appendChild(timestampCell);
+                            tableBody.appendChild(row);
+                        });
+                    } catch (error) {
+                        console.error("Error loading audit trail:", error);
+                    }
+                } else {
+                    alert("Please install MetaMask.");
+                }
+            }
+
+            window.onload = loadAuditTrail;
+        }
+        )
+
+
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" href="style/style.css">
+</head>
+
+<body style="background-image: url(./style/Crime-bg.jpg); background-position: center; background-size: cover;">
+    <section class="main-container">
+        <div class="registration-container">
+
+            <h1>Register</h1>
+
+            <label for="userRole">Select User Role:</label>
+
+            <select id="userRole">
+                <option value="">Select Role</option>
+                <option value="department">Department </option>
+                <option value="officer">officer</option>
+                <option value="forenicDepp"> Forenic Department</option>
+                <option value="judicialOfficer">Judicial Officer</option>
+            </select>
+
+            <form id="registerForm" class="user-form" method="POST" action="/auth/register">
+                <h2 id="userHead"> </h2>
+
+                <label>Name:</label><input type="text" id="name" name="name" required>
+                <label>Username:</label><input type="text" id="username" name="username" required>
+                <label>Email:</label><input type="email" id="email" name="email" required>
+                <label>Password:</label><input type="password" id="password" name="password" required>
+                <label>Retype Password:</label><input type="password" id="retypePassword" name="retypePassword"
+                    required>
+                <label>Mobile Number:</label><input type="tel" id="mobile" name="mobile" required>
+                <label>Adhar Card Number:</label><input type="text" id="adharCard" name="adharCard" required>
+                <label>Birthdate:</label><input type="date" id="birthdate" name="birthdate" required>
+                <label>Address:</label><input type="text" id="address" name="address" required>
+                <!-- Changed to 'text' -->
+
+
+
+                <button type="submit">Register</button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        const userRole = document.getElementById('userRole');
+        const userHead = document.getElementById('userHead');
+        const registerForm = document.getElementById('registerForm');
+
+        userRole.addEventListener('change', function () {
+            const selectedRole = userRole.value;
+
+            if (selectedRole === 'IT Admin') {
+                userHead.innerText = 'IT Admin Registration';
+            } else if (selectedRole === 'Investigator Officer') {
+                userHead.innerText = 'Investigator Officer Registration';
+            } else if (selectedRole === 'Judicial Officer') {
+                userHead.innerText = 'Judicial Officer Registration';
+
+            }
+        });
+
+
+        registerForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the form from submitting the default way
+
+            // Just to see if this part of the code is running
+            console.log('Form is submitted!');
+
+            const name = document.getElementById('name').value;
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const retypePassword = document.getElementById('retypePassword').value;
+            const mobile = document.getElementById('mobile').value;
+            const adharCard = document.getElementById('adharCard').value;
+            const birthdate = document.getElementById('birthdate').value;
+            const address = document.getElementById('address').value;
+            const userRole = document.getElementById('userRole').value;
+
+            console.log('Sending fetch request...');
+
+            if (password !== retypePassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            try {
+                const response = await fetch('/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name,
+                        username,
+                        email,
+                        password,
+                        mobile,
+                        adharCard,
+                        birthdate,
+                        address,
+                        userRole
+                    })
+                });
+
+                console.log('Fetch request sent. Waiting for response...');
+
+                const result = await response.json();
+                console.log('Response received:', result);
+                if (response.ok) {
+
+                    alert(result.message);
+                    // Optionally redirect to login or clear the form
+                    registerForm.reset();
+                    window.location.href = 'login.html';
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                alert('Failed to register user: ' + error.message);
+            }
+        });
+
+    </script>
+</body>
+
+</html>

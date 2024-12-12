@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+</head>
+
+<body style="background-image: url(./style/Crime-bg.jpg); background-position: center; background-size: cover;">
+    <section class="main-container">
+        <div class="login-container">
+
+            <label for="userRole">Select User Role:</label>
+
+            <select id="userRole">
+                <option value="">Select Role</option>
+                <option value="department">Department </option>
+                <option value="officer">officer</option>
+                <option value="forenicDepp"> Forenic Department</option>
+                <option value="judicialOfficer">Judicial Officer</option>
+            </select>
+
+            <form id="departmentForm" class="user-form" style="display: none;" method="POST" action="/auth/login">
+                <h1>Login</h1>
+                <label for="username">Department ID:</label>
+                <input type="text" id="departmentId" name="departmentId" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="departmentPassword" name="departmentPassword" required>
+
+                <label for="username">Individual Username:</label>
+                <input type="text" id="individualUsername" name="individualUsername" required>
+
+                <button type="submit">Login</button>
+                <div class="pass_regist">
+                    <h6>Didn't register yet?</h6>
+                    <a href="./register.html" class="btn">Register</a>
+                </div>
+            </form>
+
+            <form id="otherForm" class="user-form" style="display: none;" method="POST" action="/auth/login">
+                <h1>Login</h1>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+
+                <button type="submit">Login</button>
+                <div class="pass_regist">
+                    <h6>Didn't register yet?</h6>
+                    <a href="./register.html" class="btn">Register</a>
+                </div>
+            </form>
+            <p id="error-message" style="color: red; display: none;">Invalid credentials</p>
+        </div>
+    </section>
+
+    <script src="loginScript.js"></script>
+
+</body>
+
+</html>

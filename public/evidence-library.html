@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evidence Library</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Dashboard</h2>
+        <ul>
+            <li><a href="dashboard.html">Main Dashboard</a></li>
+            <li><a href="new-case.html">New Case Creation</a></li>
+            <li><a href="evidence-library.html">Evidence Library</a></li>
+            <li><a href="log-details.html">Log Details</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h1>Evidence Library</h1>
+        <div id="evidenceList" class="evidence-list">
+            <!-- Case and Evidence data will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        async function fetchCases() {
+            try {
+                const response = await fetch('/auth/cases');
+                if (!response.ok) throw new Error('Failed to fetch cases');
+                const cases = await response.json();
+                displayCases(cases);
+            } catch (error) {
+                console.error('Error fetching cases:', error);
+            }
+        }
+
+        function displayCases(cases) {
+            const evidenceList = document.getElementById('evidenceList');
+            evidenceList.innerHTML = '';  // Clear existing data
+
+            cases.forEach(caseData => {
+                const caseElement = document.createElement('div');
+                caseElement.className = 'case-item';
+
+                // Display case information
+                caseElement.innerHTML = `
+                    <h2>${caseData.caseName}</h2>
+                    <p><strong>Description:</strong> ${caseData.caseDescription}</p>
+                    <p><strong>Case ID:</strong> ${caseData.caseId}</p>
+                    <p><strong>Investigator:</strong> ${caseData.investigatorOfficer}</p>
+                    <p><strong>Place:</strong> ${caseData.place}</p>
+                    <p><strong>Date:</strong> ${new Date(caseData.caseDate).toLocaleDateString()}</p>
+                    <h3>Evidence Documents:</h3>
+                `;
+
+                // Display each document
+                caseData.documents.forEach(doc => {
+                    const documentLink = `https://gateway.pinata.cloud/ipfs/${doc.cid}`;
+                    const documentElement = document.createElement('div');
+                    documentElement.className = 'document-item';
+
+                    documentElement.innerHTML = `
+                        <p><strong>Document:</strong> ${doc.name}</p>
+                        <img src="${documentLink}" alt="${doc.name}" style="width: 100%; max-width: 300px;"/>
+                        <a href="${documentLink}" target="_blank">View Full Image</a>
+                    `;
+
+                    caseElement.appendChild(documentElement);
+                });
+
+                evidenceList.appendChild(caseElement);
+            });
+        }
+
+        // Fetch cases when the page loads
+        window.onload = fetchCases;
+    </script>
+</body>
+</html>
