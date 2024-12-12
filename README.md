@@ -125,25 +125,25 @@ http://localhost:3000
 ## Screenshots
 
 ### 1. EviVault Login Page
-![loginPage](https://github.com/user-attachments/assets/92b6abe0-1928-4002-8fa4-f17d04d7440e)
+![loginPage](https://github.com/user-attachments/assets/6c1c0a4b-8a46-4d39-a12d-b7e9201962c9)
 
 
 
 ### 2. EviVault Dashboard
-![Dashboard](https://github.com/user-attachments/assets/2527cead-81f1-4fb3-92c4-4bbda16707eb)
+![Dashboard](https://github.com/user-attachments/assets/71950ea5-751a-4481-aff0-d46c67caf8eb)
 
 
 ### 3. EviVault Case Creation Page
-![Casecreation](https://github.com/user-attachments/assets/37133027-ae21-4c63-908b-8dbd7ce51901)
+![Casecreation](https://github.com/user-attachments/assets/6a02c10b-5987-4a34-9d99-58a699305b51)
 
 
 ### 4. EviVault Evidence Library
-![evidence-library](https://github.com/user-attachments/assets/6345b00c-0d6b-4e86-a339-befb0cee1773)
+![evidence-library](https://github.com/user-attachments/assets/3941f5bf-111e-4af5-b4eb-83c072aad6e9)
 
 
 
 ### 5. EviVault Login Trail for Each User
-![LogDetails](https://github.com/user-attachments/assets/ba27e097-57c7-4181-aab8-2fa9a8294a9b)
+![LogDetails](https://github.com/user-attachments/assets/a572e5ea-bb89-4cd2-9bdf-09519782805b)
 
 
 ## Contact
